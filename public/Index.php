@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>
         Enggano Integration Gateway Platform
@@ -8,7 +9,25 @@
 
 <body id="kt_body" class="app-blank bgi-size-cover bgi-attachment-fixed bgi-position-center bgi-no-repeat">
     <!--begin::Theme mode setup on page load-->
-    <script>var defaultThemeMode = "light"; var themeMode; if (document.documentElement) { if (document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if (localStorage.getItem("data-bs-theme") !== null) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
+    <script>
+        var defaultThemeMode = "light";
+        var themeMode;
+        if (document.documentElement) {
+            if (document.documentElement.hasAttribute("data-bs-theme-mode")) {
+                themeMode = document.documentElement.getAttribute("data-bs-theme-mode");
+            } else {
+                if (localStorage.getItem("data-bs-theme") !== null) {
+                    themeMode = localStorage.getItem("data-bs-theme");
+                } else {
+                    themeMode = defaultThemeMode;
+                }
+            }
+            if (themeMode === "system") {
+                themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+            document.documentElement.setAttribute("data-bs-theme", themeMode);
+        }
+    </script>
     <!--end::Theme mode setup on page load-->
     <!--begin::Root-->
     <div class="d-flex flex-column flex-root" id="kt_app_root">
@@ -61,9 +80,9 @@
                             </div>
                             <div class="d-grid mb-10">
                                 <a href="/auth/login" class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
-                                    <img alt="Logo" src="~/media/logos/bgn-icon.svg" class="h-15px me-3">   
+                                    <img alt="Logo" src="~/media/logos/bgn-icon.svg" class="h-15px me-3">
                                     Login dengan SSO Badan Gizi Nasional
-                                </a> 
+                                </a>
                             </div>
                             <!--end::Submit button-->
                         </form>
@@ -82,4 +101,5 @@
     </div>
 </body>
 <!--end::Body-->
+
 </html>
