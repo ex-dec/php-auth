@@ -2,7 +2,6 @@
 
 session_start();
 
-// Set OAuth2 parameters
 $clientId = 'd8d5624e-ebdd-4075-9fe1-1f3ff1563d09';
 $clientSecret = '1065ce83-ce5f-4a3d-9d84-ca507207c8ce';
 $authorizationEndpoint = "https://sso.dev.ppmbg.id/web/signin";
@@ -13,6 +12,10 @@ $callbackPath = "/auth/callback";
 $requestUri = $_SERVER['REQUEST_URI'];
 
 switch (true) {
+    case $requestUri === '/':
+        include 'public/index.php';
+        break;
+
     case $requestUri === '/auth/login':
         login();
         break;
@@ -30,28 +33,23 @@ switch (true) {
         break;
 }
 
-// Function to initiate the login process
 function login()
 {
     global $authorizationEndpoint, $clientId;
 
     $clientId = 'd8d5624e-ebdd-4075-9fe1-1f3ff1563d09';
-    // Generate a state parameter for security (can be stored in session)
     $state = bin2hex(random_bytes(16));
     $_SESSION['oauth_state'] = $state;
 
-    // Build the authorization URL
     $authUrl = $authorizationEndpoint . '?' . http_build_query([
         'client_id' => $clientId,
         'state' => $state,
     ]);
 
-    // Redirect to OAuth2 provider
     header('Location: ' . $authUrl);
     exit();
 }
 
-// Function to handle the OAuth2 callback
 function callback()
 {
     global $clientId, $clientSecret, $tokenEndpoint, $userInfoEndpoint;
@@ -59,13 +57,11 @@ function callback()
     $clientSecret = '1065ce83-ce5f-4a3d-9d84-ca507207c8ce';
     $tokenEndpoint = "https://sso.dev.ppmbg.id/api/token";
 
-    // Validate the state parameter
     if ($_GET['state'] !== $_SESSION['oauth_state']) {
         response(400, "Invalid state");
         return;
     }
 
-    // Exchange authorization code for access token
     $code = $_GET['code'];
     $state = $_GET['state'];
 
@@ -76,18 +72,14 @@ function callback()
         return;
     }
 
-    // Fetch user info with the access token
     $userInfo = getUserInfo($userInfoEndpoint, $tokenResponse['value']['access_token']);
 
-    // Save user info in session (or handle as needed)
     $_SESSION['user'] = $userInfo;
 
-    // Redirect to the application home page or another route
     header('Location: /');
     exit();
 }
 
-// Function to get access token from the authorization server
 function getAccessToken($url, $clientId, $clientSecret, $code, $state)
 {
     $postData = [
@@ -110,7 +102,6 @@ function getAccessToken($url, $clientId, $clientSecret, $code, $state)
     return json_decode($response, true);
 }
 
-// Function to fetch user information from the user info endpoint
 function getUserInfo($url, $accessToken)
 {
     $ch = curl_init();
@@ -126,7 +117,6 @@ function getUserInfo($url, $accessToken)
     return json_decode($response, true);
 }
 
-// Function to check the authentication status of the user
 function status()
 {
     if (isset($_SESSION['user'])) {
@@ -136,7 +126,6 @@ function status()
     }
 }
 
-// Utility function to send JSON responses
 function response($statusCode, $message)
 {
     http_response_code($statusCode);
