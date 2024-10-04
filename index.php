@@ -71,7 +71,7 @@ function callback()
 
     $tokenResponse = getAccessToken($tokenEndpoint, $clientId, $clientSecret, $code, $state);
 
-    echo $tokenResponse['access_token'];
+    var_dump($tokenResponse);
 
     // if (!isset($tokenResponse['access_token'])) {
     //     response(500, "Error fetching access token");
