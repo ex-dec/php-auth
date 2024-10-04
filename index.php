@@ -1,41 +1,28 @@
 <?php
 
+session_start();
+
 // Set OAuth2 parameters
 $clientId = getenv('OAUTH2_CLIENT_ID') ?? 'd8d5624e-ebdd-4075-9fe1-1f3ff1563d09';
 $clientSecret = getenv('OAUTH2_CLIENT_SECRET') ?? '1065ce83-ce5f-4a3d-9d84-ca507207c8ce';
-$authorizationEndpoint = "https://sso.dev.ppmbg.id/web/";
-$tokenEndpoint = "https://sso.dev.ppmbg.id/oauth/token";
+$authorizationEndpoint = "https://sso.dev.ppmbg.id/web/signin";
+$tokenEndpoint = "https://sso.dev.ppmbg.id/api/token";
 $userInfoEndpoint = "https://sso.dev.ppmbg.id/api/userinfo";
 $callbackPath = "/auth/callback";
-$scope = "";
 
 $requestUri = $_SERVER['REQUEST_URI'];
-$method = $_SERVER['REQUEST_METHOD'];
 
-// Simple routing based on the request path
 switch ($requestUri) {
     case '/auth/login':
-        if ($method === 'GET') {
-            login();
-        } else {
-            response(405, "Method Not Allowed");
-        }
+        login();
         break;
 
     case '/auth/callback':
-        if ($method === 'GET') {
-            callback();
-        } else {
-            response(405, "Method Not Allowed");
-        }
+        callback();
         break;
 
     case '/auth/status':
-        if ($method === 'GET') {
-            status();
-        } else {
-            response(405, "Method Not Allowed");
-        }
+        status();
         break;
 
     default:
@@ -46,16 +33,16 @@ switch ($requestUri) {
 // Function to initiate the login process
 function login()
 {
-    global $authorizationEndpoint, $clientId, $scope;
+    global $authorizationEndpoint, $clientId;
 
-    // Generate a state parameter for security (can be stored in cookie or used as is)
+    // Generate a state parameter for security (can be stored in session)
     $state = bin2hex(random_bytes(16));
-    setcookie("oauth_state", $state, time() + 3600, "", "", true, true); // Secure HTTP-only cookie
+    $_SESSION['oauth_state'] = $state;
 
     // Build the authorization URL
     $authUrl = $authorizationEndpoint . '?' . http_build_query([
         'client_id' => $clientId,
-        'param_state' => $state,
+        'state' => $state,
     ]);
 
     // Redirect to OAuth2 provider
@@ -69,27 +56,27 @@ function callback()
     global $clientId, $clientSecret, $tokenEndpoint, $userInfoEndpoint;
 
     // Validate the state parameter
-    if (!isset($_GET['state']) || $_GET['state'] !== $_COOKIE['oauth_state']) {
+    if ($_GET['state'] !== $_SESSION['oauth_state']) {
         response(400, "Invalid state");
         return;
     }
 
     // Exchange authorization code for access token
     $code = $_GET['code'];
-    $redirectUri = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]/auth/callback";
+    $state = $_GET['state'];
 
-    $tokenResponse = getAccessToken($tokenEndpoint, $clientId, $clientSecret, $code, $redirectUri);
+    $tokenResponse = getAccessToken($tokenEndpoint, $clientId, $clientSecret, $code, $state);
 
     if (!isset($tokenResponse['access_token'])) {
         response(500, "Error fetching access token");
         return;
     }
 
-    // Store the access token in a secure, HTTP-only cookie
-    setcookie("access_token", $tokenResponse['access_token'], time() + 3600, "", "", true, true); // Secure HTTP-only cookie
-
-    // Fetch user info with the access token (optional)
+    // Fetch user info with the access token
     $userInfo = getUserInfo($userInfoEndpoint, $tokenResponse['access_token']);
+
+    // Save user info in session (or handle as needed)
+    $_SESSION['user'] = $userInfo;
 
     // Redirect to the application home page or another route
     header('Location: /');
@@ -97,12 +84,12 @@ function callback()
 }
 
 // Function to get access token from the authorization server
-function getAccessToken($url, $clientId, $clientSecret, $code, $redirectUri)
+function getAccessToken($url, $clientId, $clientSecret, $code, $state)
 {
     $postData = [
+        'state' => $state,
         'grant_type' => 'authorization_code',
-        'code' => $code,
-        'redirect_uri' => $redirectUri,
+        'authorization_code' => $code,
         'client_id' => $clientId,
         'client_secret' => $clientSecret,
     ];
@@ -138,8 +125,8 @@ function getUserInfo($url, $accessToken)
 // Function to check the authentication status of the user
 function status()
 {
-    if (isset($_COOKIE['access_token'])) {
-        response(200, "User is authenticated");
+    if (isset($_SESSION['user'])) {
+        response(200, $_SESSION['user']);
     } else {
         response(401, "User not authenticated");
     }
