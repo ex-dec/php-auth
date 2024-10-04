@@ -17,7 +17,7 @@ switch ($requestUri) {
         login();
         break;
 
-    case '/auth/callback':
+    case '/auth/callback*':
         callback();
         break;
 
