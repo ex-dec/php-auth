@@ -12,7 +12,7 @@ $callbackPath = "/auth/callback";
 $requestUri = $_SERVER['REQUEST_URI'];
 
 switch (true) {
-    case $requestUri === '/':
+    case $requestUri === '/login':
         include 'public/index.php';
         break;
 
