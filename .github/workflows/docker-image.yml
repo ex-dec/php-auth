@@ -30,7 +30,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/auth-php:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/auth-php:latest,${{ secrets.DOCKER_USERNAME }}/auth-php:${{ github.sha }}
 
       - name: Verify Docker image
         run: docker images ${{ secrets.DOCKER_USERNAME }}/auth-php:latest
@@ -51,4 +51,4 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" | cat > $HOME/.kube/config
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image deployment/auth-docs auth-docs=exdec/auth-php:latest -n sindika-dev
+          kubectl set image deployment/auth-docs auth-docs=exdec/auth-php:${{ github.sha }} -n sindika-dev
