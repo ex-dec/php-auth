@@ -13,7 +13,7 @@ $requestUri = $_SERVER['REQUEST_URI'];
 
 switch (true) {
     case $requestUri === '/login':
-        include 'public/';
+        include 'public/index.php';
         break;
 
     case $requestUri === '/auth/login':
