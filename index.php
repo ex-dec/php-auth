@@ -3,8 +3,8 @@
 session_start();
 
 // Set OAuth2 parameters
-$clientId = getenv('OAUTH2_CLIENT_ID') ?? 'd8d5624e-ebdd-4075-9fe1-1f3ff1563d09';
-$clientSecret = getenv('OAUTH2_CLIENT_SECRET') ?? '1065ce83-ce5f-4a3d-9d84-ca507207c8ce';
+$clientId = 'd8d5624e-ebdd-4075-9fe1-1f3ff1563d09';
+$clientSecret = '1065ce83-ce5f-4a3d-9d84-ca507207c8ce';
 $authorizationEndpoint = "https://sso.dev.ppmbg.id/web/signin";
 $tokenEndpoint = "https://sso.dev.ppmbg.id/api/token";
 $userInfoEndpoint = "https://sso.dev.ppmbg.id/api/userinfo";
