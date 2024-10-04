@@ -55,6 +55,9 @@ function login()
 function callback()
 {
     global $clientId, $clientSecret, $tokenEndpoint, $userInfoEndpoint;
+    $clientId = 'd8d5624e-ebdd-4075-9fe1-1f3ff1563d09';
+    $clientSecret = '1065ce83-ce5f-4a3d-9d84-ca507207c8ce';
+    $tokenEndpoint = "https://sso.dev.ppmbg.id/api/token";
 
     // Validate the state parameter
     if ($_GET['state'] !== $_SESSION['oauth_state']) {
@@ -67,6 +70,8 @@ function callback()
     $state = $_GET['state'];
 
     $tokenResponse = getAccessToken($tokenEndpoint, $clientId, $clientSecret, $code, $state);
+
+    echo $tokenResponse;
 
     if (!isset($tokenResponse['access_token'])) {
         response(500, "Error fetching access token");
