@@ -12,16 +12,16 @@ $callbackPath = "/auth/callback";
 
 $requestUri = $_SERVER['REQUEST_URI'];
 
-switch ($requestUri) {
-    case '/auth/login':
+switch (true) {
+    case $requestUri === '/auth/login':
         login();
         break;
 
-    case '/auth/callback*':
+    case preg_match('/\/auth\/callback.*/', $requestUri):
         callback();
         break;
 
-    case '/auth/status':
+    case $requestUri === '/auth/status':
         status();
         break;
 
