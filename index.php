@@ -35,6 +35,7 @@ function login()
 {
     global $authorizationEndpoint, $clientId;
 
+    $clientId = 'd8d5624e-ebdd-4075-9fe1-1f3ff1563d09';
     // Generate a state parameter for security (can be stored in session)
     $state = bin2hex(random_bytes(16));
     $_SESSION['oauth_state'] = $state;
