@@ -73,20 +73,20 @@ function callback()
 
     echo $tokenResponse;
 
-    if (!isset($tokenResponse['access_token'])) {
-        response(500, "Error fetching access token");
-        return;
-    }
+    // if (!isset($tokenResponse['access_token'])) {
+    //     response(500, "Error fetching access token");
+    //     return;
+    // }
 
-    // Fetch user info with the access token
-    $userInfo = getUserInfo($userInfoEndpoint, $tokenResponse['access_token']);
+    // // Fetch user info with the access token
+    // $userInfo = getUserInfo($userInfoEndpoint, $tokenResponse['access_token']);
 
-    // Save user info in session (or handle as needed)
-    $_SESSION['user'] = $userInfo;
+    // // Save user info in session (or handle as needed)
+    // $_SESSION['user'] = $userInfo;
 
-    // Redirect to the application home page or another route
-    header('Location: /');
-    exit();
+    // // Redirect to the application home page or another route
+    // header('Location: /');
+    // exit();
 }
 
 // Function to get access token from the authorization server
